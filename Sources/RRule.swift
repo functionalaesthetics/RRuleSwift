@@ -26,10 +26,11 @@ public struct RRule {
 
     public static func ruleFromString(_ string: String) -> RecurrenceRule? {
         let string = string.trimmingCharacters(in: .whitespaces)
-        guard let range = string.range(of: "RRULE:"), range.lowerBound == string.startIndex else {
-            return nil
+        var ruleString = string
+        if let range = string.range(of: "RRULE:"), range.lowerBound == string.startIndex {
+            ruleString = String(string.suffix(from: range.upperBound))
         }
-        let ruleString = String(string.suffix(from: range.upperBound))
+
         let rules = ruleString.components(separatedBy: ";").flatMap { (rule) -> String? in
             if (rule.isEmpty || rule.characters.count == 0) {
                 return nil
@@ -172,8 +173,8 @@ public struct RRule {
         return recurrenceRule
     }
 
-    public static func stringFromRule(_ rule: RecurrenceRule) -> String {
-        var rruleString = "RRULE:"
+    public static func stringFromRule(_ rule: RecurrenceRule, shouldPrefixWithRRule: Bool = true) -> String {
+        var rruleString = shouldPrefixWithRRule ? "RRULE:" : ""
 
         rruleString += "FREQ=\(rule.frequency.toString());"
 
