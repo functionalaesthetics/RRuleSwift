@@ -10,12 +10,15 @@ import Foundation
 import EventKit
 
 internal struct JavaScriptBridge {
+    // This class is needed to be able to get out bundle
+    private class DummyClass {}
+    
     internal static func rrulejs() -> String? {
-        let libPath = Bundle(identifier: "Teambition.RRuleSwift-iOS")?.path(forResource: "rrule", ofType: "js") ?? Bundle.main.path(forResource: "rrule", ofType: "js")
+        let libPath = Bundle(for: DummyClass.self).path(forResource: "rrule", ofType: "js") ?? Bundle.main.path(forResource: "rrule", ofType: "js")
         guard let rrulelibPath = libPath else {
             return nil
         }
-
+        
         do {
             return try String(contentsOfFile: rrulelibPath)
         } catch _ {
